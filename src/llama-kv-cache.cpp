@@ -2,6 +2,7 @@
 
 #include "llama-impl.h"
 #include "llama-io.h"
+#include "llama-kv-file.h"
 #include "llama-model.h"
 #include "llama-context.h"
 
@@ -123,6 +124,18 @@ llama_kv_cache::llama_kv_cache(
             buft = ggml_backend_dev_buffer_type(dev);
 
             dev_name = ggml_backend_dev_name(dev);
+        }
+
+        // file-backed (mmap) KV cache: swap any host (CPU) buffer for a file mapping.
+        // Non-host (GPU) buffers are left untouched. See docs/LLAMA_CPP_MMAP_PATCH.md
+        if (const char * kv_file = getenv("LLAMA_KV_CACHE_FILE")) {
+            if (ggml_backend_buft_is_host(buft)) {
+                ggml_backend_buffer_type_t file_buft = llama_kv_file_buffer_type(kv_file);
+                if (file_buft) {
+                    buft = file_buft;
+                    dev_name = "CPU_KV_File";
+                }
+            }
         }
 
         LLAMA_LOG_DEBUG("%s: layer %3d: dev = %s\n", __func__, il, dev_name);

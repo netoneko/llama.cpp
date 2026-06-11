@@ -22,6 +22,7 @@ add_library(llama
             llama-io.cpp
             llama-kv-cache.cpp
             llama-kv-cache-iswa.cpp
+            llama-kv-file.cpp
             llama-memory.cpp
             llama-memory-hybrid.cpp
             llama-memory-hybrid-iswa.cpp
@@ -158,6 +159,8 @@ set_target_properties(llama PROPERTIES
 
 target_include_directories(llama PRIVATE .)
 target_include_directories(llama PUBLIC ../include)
+# llama-kv-file.cpp needs ggml's internal backend header (ggml_backend_buffer_init)
+target_include_directories(llama PRIVATE ../ggml/src)
 target_compile_features   (llama PRIVATE cxx_std_17) # don't bump
 
 target_link_libraries(llama PUBLIC ggml)
