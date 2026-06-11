@@ -1993,6 +1993,16 @@ common_params_context common_params_parser_init(common_params & params, llama_ex
         }
     ).set_env("LLAMA_ARG_NO_HOST"));
     add_opt(common_arg(
+        {"-kvf", "--kv-cache-file"}, "FNAME",
+        "back the (host/CPU) KV cache with an mmap'd file instead of anonymous RAM.\n"
+        "only takes effect for KV tensors on a host buffer (e.g. with -ngl 0 or a CPU-only build);\n"
+        "KV tensors offloaded to a GPU are left untouched. equivalent to setting LLAMA_KV_CACHE_FILE",
+        [](common_params &, const std::string & value) {
+            // consumed via getenv("LLAMA_KV_CACHE_FILE") in libllama (llama-kv-cache.cpp)
+            setenv("LLAMA_KV_CACHE_FILE", value.c_str(), 1);
+        }
+    ).set_env("LLAMA_KV_CACHE_FILE"));
+    add_opt(common_arg(
         {"-ctk", "--cache-type-k"}, "TYPE",
         string_format(
             "KV cache data type for K\n"
