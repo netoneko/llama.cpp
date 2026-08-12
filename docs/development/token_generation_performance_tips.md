@@ -38,3 +38,10 @@ Result:
 | -t 1 -ngl 2000000 | 5.5 |
 | -t 7 -ngl 2000000 | 8.7 |
 | -t 4 -ngl 2000000 | 9.1 |
+
+## Low-memory CPU inference: `--mmap`, `--no-repack`, and `--kv-cache-file`
+
+When running on constrained hardware (CPU-only, RAM ≤ model size), three flags control
+how much anonymous (non-evictable) memory llama uses. For benchmarks, flag recommendations,
+and a comparison with Akuma OS, see
+[`docs/LLAMA_CPP_MMAP_PATCH.md`](../../docs/LLAMA_CPP_MMAP_PATCH.md#low-memory-inference-flags-limits-and-measured-tps).
